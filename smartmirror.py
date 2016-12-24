@@ -11,9 +11,33 @@ import feedparser
 from PIL import Image, ImageTk
 from io import StringIO
 
+import httplib2
+import os
+
+from apiclient import discovery
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+
+import datetime
+
+try:
+    import argparse
+    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+except ImportError:
+    flags = None
+
+
+SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'MirrorMirror'
 
 country_code = 'us'
-weather_api_token = '92de97ca4c23964c'
+#weather_api_token = '74eaa90a628992d4'
+
+weather_api_token = ''
+with open('weather_key.txt', 'r') as f:
+    weather_api_token = f.readline().strip()
 
 # maps open weather icons to
 icon_lookup = {
@@ -129,11 +153,11 @@ class Weather(Frame):
 			location2 = "%s, %s" % (location_obj['city'], location_obj['region_code'])
 
 			# get weather
-			weather_req_url = "http://api.wunderground.com/api/%s/conditions/q/VA/Blacksburg.json" % (weather_api_token)
+			weather_req_url = "http://api.wunderground.com/api/%s/conditions/q/VA/Alexandria.json" % (weather_api_token)
 			r = requests.get(weather_req_url)
 			weather_obj = json.loads(r.text)
 
-			forecast_req_url = 'http://api.wunderground.com/api/92de97ca4c23964c/forecast/q/VA/Blacksburg.json'
+			forecast_req_url = 'http://api.wunderground.com/api/%s/forecast/q/VA/Blacksburg.json' % (weather_api_token)
 			r = requests.get(forecast_req_url)
 			forecast_obj = json.loads(r.text)
 			
@@ -152,8 +176,6 @@ class Weather(Frame):
 			
 			icon_id = weather_obj['current_observation']['icon']
 			icon2 = None
-
-			print(icon_id)
 
 			if icon_id in icon_lookup:
 				icon2 = icon_lookup[icon_id]
@@ -229,6 +251,7 @@ class News(Frame):
 			for post in feed.entries[0:5]:
 				headline = NewsHeadline(self.headlinesContainer, post.title)
 				headline.pack(side=TOP, anchor=W)
+
 		except Exception as e:
 			traceback.print_exc()
 			print ("Error: %s. Cannot get news." % e)
@@ -264,23 +287,62 @@ class Calendar(Frame):
 		self.calendarEventContainer.pack(side=TOP, anchor=E)
 		self.get_events()
 
+	def get_credentials(self):
+		"""Gets valid user credentials from storage.
+
+		If nothing has been stored, or if the stored credentials are invalid,
+		the OAuth2 flow is completed to obtain the new credentials.
+
+		Returns:
+		    Credentials, the obtained credential.
+		"""
+		home_dir = os.path.expanduser('~')
+		credential_dir = os.path.join(home_dir, '.credentials')
+		if not os.path.exists(credential_dir):
+				os.makedirs(credential_dir)
+		credential_path = os.path.join(credential_dir,
+		                               'calendar-python-quickstart.json')
+
+		store = Storage(credential_path)
+		credentials = store.get()
+		if not credentials or credentials.invalid:
+			flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+			flow.user_agent = APPLICATION_NAME
+			credentials = tools.run_flow(flow, store, flags)
+			print('Storing credentials to ' + credential_path)
+		return credentials
+
 	def get_events(self):
-		#TODO: implement this method
-		# referenc https://developers.google.com/google-apps/calendar/quickstart/python
+		credentials = self.get_credentials()
+		http = credentials.authorize(httplib2.Http())
+		service = discovery.build('calendar', 'v3', http=http)
+
+		now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+		eventsResult = service.events().list(
+		    calendarId='primary', timeMin=now, maxResults=5, singleEvents=True,
+		    orderBy='startTime').execute()
+		events = eventsResult.get('items', [])
 
 		# remove all children
 		for widget in self.calendarEventContainer.winfo_children():
 			widget.destroy()
 
-		calendar_event = CalendarEvent(self.calendarEventContainer)
-		calendar_event.pack(side=TOP, anchor=E)
-		pass
+		if not events:
+			print('No upcoming events found.')
+		for event in events:
+			start = event['start'].get('dateTime', event['start'].get('date'))
+			calendar_event = CalendarEvent(self.calendarEventContainer, 
+																			event_name=event['summary'], 
+																			event_time=start)
+			calendar_event.pack(side=TOP, anchor=E)
+
+		self.after(30000, self.get_events)
 
 
 class CalendarEvent(Frame):
-	def __init__(self, parent, event_name="Event 1"):
+	def __init__(self, parent, event_name="Event 1", event_time='None'):
 		Frame.__init__(self, parent, bg='black')
-		self.eventName = event_name
+		self.eventName = event_time + ' ' + event_name
 		self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', 18), fg="white", bg="black")
 		self.eventNameLbl.pack(side=TOP, anchor=E)
 
