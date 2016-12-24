@@ -2,31 +2,23 @@
 # requirements
 # requests, feedparser, traceback, Pillow
 
-from tkinter import *
+from Tkinter import *
+import os
 import time
-import requests
 import json
+import datetime
+import requests
+import httplib2
 import traceback
 import feedparser
 from PIL import Image, ImageTk
 from io import StringIO
 
-import httplib2
-import os
-
+# Google Calendar API imports
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-
-import datetime
-
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
-
 
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -36,7 +28,7 @@ country_code = 'us'
 weather_api_token = ''
 with open('weather_key.txt', 'r') as f:
     weather_api_token = f.readline()
-    
+
 # maps open weather icons to
 icon_lookup = {
 	'clear': "assets/icons/clear.png",											# clear sky day
@@ -144,18 +136,15 @@ class Weather(Frame):
 			location_req_url = "http://freegeoip.net/json/%s" % self.get_ip()
 			r = requests.get(location_req_url)
 			location_obj = json.loads(r.text)
-			
-			lat = location_obj['latitude']
-			lon = location_obj['longitude']
 
 			location2 = "%s, %s" % (location_obj['city'], location_obj['region_code'])
 
 			# get weather
-			weather_req_url = "http://api.wunderground.com/api/%s/conditions/q/VA/Alexandria.json" % (weather_api_token)
+			weather_req_url = "http://api.wunderground.com/api/%s/conditions/q/%s/%s.json" % (weather_api_token, location_obj['region_code'], location_obj['city'])
 			r = requests.get(weather_req_url)
 			weather_obj = json.loads(r.text)
 
-			forecast_req_url = 'http://api.wunderground.com/api/%s/forecast/q/VA/Blacksburg.json' % (weather_api_token)
+			forecast_req_url = "http://api.wunderground.com/api/%s/forecast/q/%s/%s.json" % (weather_api_token, location_obj['region_code'], location_obj['city'])
 			r = requests.get(forecast_req_url)
 			forecast_obj = json.loads(r.text)
 			
