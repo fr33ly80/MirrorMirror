@@ -2,30 +2,35 @@
 # requirements
 # requests, feedparser, traceback, Pillow
 
-from Tkinter import *
+from tkinter import *
 import time
 import requests
 import json
 import traceback
 import feedparser
 from PIL import Image, ImageTk
-from StringIO import StringIO
+from io import StringIO
+
 
 country_code = 'us'
 weather_api_token = '92de97ca4c23964c'
 
 # maps open weather icons to
 icon_lookup = {
-	'clear': "assets/icons/clear.png",						# clear sky day
-	'nt_clear': "assets/icons/nt_clear.png",				# clear sky night
-	'partlycloudy': "assets/icons/partlycloudy.png",		# partly cloudy day
+	'clear': "assets/icons/clear.png",											# clear sky day
+	'nt_clear': "assets/icons/nt_clear.png",								# clear sky night
+	'partlycloudy': "assets/icons/partlycloudy.png",				# partly cloudy day
 	'nt_partlycloudy': "assets/icons/nt_partlycloudy.png",	# partly cloudy day
-	'mostlycloudy': "assets/icons/mostlycloudy.png",		# mostly cloudy day
+	'mostlycloudy': "assets/icons/mostlycloudy.png",				# mostly cloudy day
 	'nt_mostlycloudy': "assets/icons/nt_mostlycloudy.png",	# mostly cloudy night
-	'tstorms': "assets/icons/tstorms.png",					# thunder storms day
-	'nt_tstorms': "assets/icons/nt_tstorms.png",			# thunder storms night
-	'rain': "assets/icons/rain.png",						# rain day
-	'nt_rain': "assets/icons/nt_rain.png",					# rain night
+	'cloudy': "assets/icons/cloudy.png",										# cloudy day
+	'nt_cloudy': "assets/icons/nt_cloudy.png",							# cloudy night	
+	'fog': "assets/icons/fog.png",													# foggy day
+	'nt_fog': "assets/icons/nt_fog.png",										# foggy night	
+	'tstorms': "assets/icons/tstorms.png",									# thunder storms day
+	'nt_tstorms': "assets/icons/nt_tstorms.png",						# thunder storms night
+	'rain': "assets/icons/rain.png",												# rain day
+	'nt_rain': "assets/icons/nt_rain.png",									# rain night
 }
 
 
@@ -148,6 +153,8 @@ class Weather(Frame):
 			icon_id = weather_obj['current_observation']['icon']
 			icon2 = None
 
+			print(icon_id)
+
 			if icon_id in icon_lookup:
 				icon2 = icon_lookup[icon_id]
 
@@ -187,7 +194,7 @@ class Weather(Frame):
 					self.locationLbl.config(text=location2)
 		except Exception as e:
 			traceback.print_exc()
-			print "Error: %s. Cannot get weather." % e
+			print ("Error: %s. Cannot get weather." % e)
 
 		self.after(600000, self.get_weather)
 
@@ -224,7 +231,7 @@ class News(Frame):
 				headline.pack(side=TOP, anchor=W)
 		except Exception as e:
 			traceback.print_exc()
-			print "Error: %s. Cannot get news." % e
+			print ("Error: %s. Cannot get news." % e)
 
 		self.after(600000, self.get_headlines)
 
