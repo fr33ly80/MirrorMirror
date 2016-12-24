@@ -33,12 +33,10 @@ CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'MirrorMirror'
 
 country_code = 'us'
-#weather_api_token = '74eaa90a628992d4'
-
 weather_api_token = ''
 with open('weather_key.txt', 'r') as f:
-    weather_api_token = f.readline().strip()
-
+    weather_api_token = f.readline()
+    
 # maps open weather icons to
 icon_lookup = {
 	'clear': "assets/icons/clear.png",											# clear sky day
