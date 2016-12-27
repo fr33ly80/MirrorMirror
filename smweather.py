@@ -1,11 +1,21 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec 26 18:17:00 2016
+
+@author: brend
+"""
+
 from tkinter import *
 import traceback
 import requests
 import json
 from PIL import Image, ImageTk
+import sys
 
 weather_api_token = ''
-with open('weather_key.txt', 'r') as f:
+path = sys.argv[0]
+path = path[0:(len(path) - 12)]
+with open('weatherkey.txt', 'r') as f:
     weather_api_token = f.readline()
 
 # maps weather underground icons to ids
@@ -31,6 +41,8 @@ class Weather(Frame):
 	def __init__(self, parent, *args, **kwargs):
 		Frame.__init__(self, parent, bg='black')
 		self.temperature = ''
+		self.units = 'celsius'
+		self.tunits = 'temp_c'
 		self.location = ''
 		self.currently = ''
 		self.icon = ''
@@ -97,11 +109,11 @@ class Weather(Frame):
 
 			degree_sign= u'\N{DEGREE SIGN}'
 			
-			temperature2 = "%s%s" % (str(int(weather_obj['current_observation']['temp_c'])), degree_sign)
+			temperature2 = "%s%s" % (str(int(weather_obj['current_observation'][self.tunits])), degree_sign)
 			currently2 = weather_obj['current_observation']['weather']
 			
-			highTemp2 =  "H: %s%s" % (str(int(temps['high']['celsius'])), degree_sign)
-			lowTemp2 = "L: %s%s" % (str(int(temps['low']['celsius'])), degree_sign)
+			highTemp2 =  "H: %s%s" % (str(int(temps['high'][self.units])), degree_sign)
+			lowTemp2 = "L: %s%s" % (str(int(temps['low'][self.units])), degree_sign)
 			
 			icon_id = weather_obj['current_observation']['icon']
 			icon2 = None
