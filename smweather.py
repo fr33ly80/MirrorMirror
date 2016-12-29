@@ -13,8 +13,6 @@ from PIL import Image, ImageTk
 import sys
 
 weather_api_token = ''
-path = sys.argv[0]
-path = path[0:(len(path) - 12)]
 with open('weatherkey.txt', 'r') as f:
     weather_api_token = f.readline()
 

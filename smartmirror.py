@@ -6,7 +6,6 @@ from smcalendar import *
 from MirrorListener import *
 
 import queue
-import threading
 
 cmdQueue = queue.Queue()
 
@@ -38,7 +37,12 @@ class FullscreenWindow:
       # calender
 		self.calender = Calendar(self.bottomFrame)
 		self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
-		self.checkQueue()
+		
+		# SR Sprite
+		#self.sr_sprite = mirrorSprite(self.topFrame)
+		#self.sr_sprite.pack(side=RIGHT, anchor=NE)
+		
+		self.checkQueue()		
 		
 	def toggle_fullscreen(self, event=None):
 		self.state = not self.state  # Just toggling the boolean
@@ -53,14 +57,31 @@ class FullscreenWindow:
 	def checkQueue(self):
 		if not self.cmdQueue.empty():
 			cmd = self.cmdQueue.get()
-			try:
-				exec(cmd)
-			except:
-				print('Couldnt run cmd')
-				print(cmd)
-				pass
+			if cmd == 'recognized':
+				print('recognized')
+				#self.sr_sprite.set_color('blue')
+				#self.sr_sprite.start_flashing()
+			elif cmd == 'understood':
+				print('understood')
+				#self.sr_sprite.set_color('green')
+				#self.sr_sprite.start_flashing()
+			elif cmd == 'Interpret Error':
+				print('Interp Error')
+				#self.sr_sprite.set_color('red')
+				#self.sr_sprite.start_flashing()
+				#self.tk.after(1500, self.sr_sprite.set_color)
+			else:
+				try:
+					exec(cmd)
+					#self.sr_sprite.stop_flashing()
+				except:
+					print('Exec Error')
+					#self.sr_sprite.set_color('red')
+					#self.sr_sprite.start_flashing()
+					#self.tk.after(1500, self.sr_sprite.stop_flashing)
+					#self.sr_sprite.set_color('black')
 			self.cmdQueue.task_done()
-		self.tk.after(200, self.checkQueue)
+		self.tk.after(100, self.checkQueue)
   
 	def change_temp_units(self):
 		if self.weather.tunits == 'temp_c':
