@@ -69,7 +69,7 @@ class Weather(Frame):
 		self.currentlyLbl.pack(side=TOP, anchor=W)
 		self.locationLbl = Label(self.currLocFrm, font=('Helvetica', 18), fg="white", bg="black")
 		self.locationLbl.pack(side=TOP, anchor=W)
-		self.get_weather()
+		#self.get_weather()
 		
 	def get_ip(self):
 		try:
@@ -157,7 +157,7 @@ class Weather(Frame):
 			traceback.print_exc()
 			print ("Error: %s. Cannot get weather." % e)
 
-		self.after(600000, self.get_weather)
+		#self.after(600000, self.get_weather)
 
 	@staticmethod
 	def convert_kelvin_to_fahrenheit(kelvin_temp):
