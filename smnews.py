@@ -15,7 +15,7 @@ class News(Frame):
 		self.newsLbl.pack(side=TOP, anchor=W)
 		self.headlinesContainer = Frame(self, bg="black")
 		self.headlinesContainer.pack(side=TOP)
-		self.get_headlines()
+		#self.get_headlines()
 
 	def get_headlines(self):
 		try:
@@ -37,7 +37,7 @@ class News(Frame):
 			traceback.print_exc()
 			print ("Error: %s. Cannot get news." % e)
 
-		self.after(600000, self.get_headlines)
+		#self.after(600000, self.get_headlines)
 
 
 class NewsHeadline(Frame):

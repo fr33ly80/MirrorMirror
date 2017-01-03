@@ -16,7 +16,7 @@ class Clock(Frame):
 		self.date1 = ''
 		self.dateLbl = Label(self, text=self.date1, font=('Helvetica', 18), fg="white", bg="black")
 		self.dateLbl.pack(side=TOP, anchor=E)
-		self.tick()
+		#self.tick()
 
 	def tick(self):
 		time2 = time.strftime('%I:%M')
@@ -35,4 +35,4 @@ class Clock(Frame):
 		# calls itself every 200 milliseconds
 		# to update the time display as needed
 		# could use >200 ms, but display gets jerky
-		self.timeLbl.after(200, self.tick)
+		#self.timeLbl.after(200, self.tick)

@@ -4,14 +4,16 @@ from smweather import *
 from smnews import *
 from smcalendar import *
 from MirrorListener import *
+from MirrorController import *
 
 import queue
 
 cmdQueue = queue.Queue()
+msgQueue = queue.Queue()
 
 class FullscreenWindow:
 
-	def __init__(self, cmdQueue):
+	def __init__(self, cmdQueue, msgQueue):
 		self.tk = Tk()
 		self.tk.configure(background='black')
 		self.topFrame = Frame(self.tk, background = 'black')
@@ -22,6 +24,7 @@ class FullscreenWindow:
 		self.tk.bind("<Return>", self.toggle_fullscreen)
 		self.tk.bind("<Escape>", self.end_fullscreen)
 		self.cmdQueue = cmdQueue
+		self.msgQueue = msgQueue
 		# clock
 		self.clock = Clock(self.topFrame)
 		self.clock.pack(side=RIGHT, anchor=N, padx=100, pady=60)
@@ -34,13 +37,13 @@ class FullscreenWindow:
 		self.news = News(self.bottomFrame)
 		self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
       
-      # calender
-		self.calender = Calendar(self.bottomFrame)
-		self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
+      # calendar
+		self.calendar = Calendar(self.bottomFrame)
+		self.calendar.pack(side = RIGHT, anchor=S, padx=100, pady=60)
 		
 		# SR Sprite
-		#self.sr_sprite = mirrorSprite(self.topFrame)
-		#self.sr_sprite.pack(side=RIGHT, anchor=NE)
+		self.sr_sprite = mirrorSprite(self.topFrame)
+		self.sr_sprite.pack(side=TOP, anchor=N)
 		
 		self.checkQueue()		
 		
@@ -59,15 +62,15 @@ class FullscreenWindow:
 			cmd = self.cmdQueue.get()
 			if cmd == 'recognized':
 				print('recognized')
-				#self.sr_sprite.set_color('blue')
+				self.sr_sprite.set_color('blue')
 				#self.sr_sprite.start_flashing()
 			elif cmd == 'understood':
 				print('understood')
-				#self.sr_sprite.set_color('green')
+				self.sr_sprite.set_color()
 				#self.sr_sprite.start_flashing()
 			elif cmd == 'Interpret Error':
 				print('Interp Error')
-				#self.sr_sprite.set_color('red')
+				self.sr_sprite.set_color()
 				#self.sr_sprite.start_flashing()
 				#self.tk.after(1500, self.sr_sprite.set_color)
 			else:
@@ -79,8 +82,19 @@ class FullscreenWindow:
 					#self.sr_sprite.set_color('red')
 					#self.sr_sprite.start_flashing()
 					#self.tk.after(1500, self.sr_sprite.stop_flashing)
-					#self.sr_sprite.set_color('black')
+					self.sr_sprite.set_color()
 			self.cmdQueue.task_done()
+			
+		if not self.msgQueue.empty():
+			msg = self.msgQueue.get()
+			try:
+				#print(msg)
+				exec(msg)
+			except Exception as e:
+				print (str(e))
+				print ('error in msg queue execution')
+			self.msgQueue.task_done()
+			
 		self.tk.after(100, self.checkQueue)
   
 	def change_temp_units(self):
@@ -94,8 +108,10 @@ class FullscreenWindow:
 		self.weather.get_weather()
 
 if __name__ == '__main__':
-    listener = mirror_earror(cmdQueue)
-    listener.daemon = True
-    listener.start()
-    w = FullscreenWindow(cmdQueue)
-    w.tk.mainloop()
+	listener = mirror_earror(cmdQueue)
+	listener.daemon = True
+	listener.start()
+	controller = Controller(msgQueue)
+	controller.start()	
+	w = FullscreenWindow(cmdQueue, msgQueue)
+	w.tk.mainloop()

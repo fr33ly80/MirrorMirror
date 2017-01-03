@@ -22,7 +22,7 @@ class Calendar(Frame):
 		self.calendarLbl.pack(side=TOP, anchor=E)
 		self.calendarEventContainer = Frame(self, bg='black')
 		self.calendarEventContainer.pack(side=TOP, anchor=E)
-		self.get_events()
+		#self.get_events()
 
 	def get_credentials(self):
 		"""Gets valid user credentials from storage.
@@ -73,7 +73,7 @@ class Calendar(Frame):
 																			event_time=start)
 			calendar_event.pack(side=TOP, anchor=E)
 
-		self.after(600000, self.get_events)
+		#self.after(600000, self.get_events)
 
 
 class CalendarEvent(Frame):
