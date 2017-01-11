@@ -13,7 +13,7 @@ from PIL import Image, ImageTk
 import sys
 
 weather_api_token = ''
-with open('weatherkey.txt', 'r') as f:
+with open('weather_key.txt', 'r') as f:
     weather_api_token = f.readline()
 
 # maps weather underground icons to ids
