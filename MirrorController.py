@@ -32,49 +32,17 @@ class Controller(threading.Thread):
 	def update_calendar(self):
 		self.msgQueue.put('self.calendar.get_events()')
 		
-	'''
-	def tick(self):
-		if self.msgQueue.empty():
-			self.msgQueue.put('self.Clock.tick()')
-			return
-		else:
-			time.sleep(0.2)
-			self.tick()
-			
-	def update_weather(self):
-		if self.msgQueue.empty():
-			self.msgQueue.put('self.Weather.get_weather()')
-			return
-		else:
-			time.sleep(0.2)
-			self.update_weather()
-	
-	def update_news(self):
-		if self.msgQueue.empty():
-			self.msgQueue.put('self.News.get_headlines()')
-			return
-		else:
-			time.sleep(0.2)
-			self.tick()
-			
-	def update_calendar(self):
-		if self.msgQueue.empty():
-			self.msgQueue.put('self.Calendar.get_events()')
-			return
-		else:
-			time.sleep(0.2)
-			self.update_calendar()
-	'''
 	
 	def run(self):
-		time.sleep(0.5)
-		self.i += 0.5
-		self.tick()
-		if self.i%600 == 0:
-			self.update_news()
-		elif self.i%400 == 0:
-			self.update_calendar()
-		elif self.i%200 == 0:
+		while(1):
+			time.sleep(0.5)
+			self.i += 0.5
+			self.tick()
+			if self.i%600 == 0:
+				self.update_news()
+			elif self.i%400 == 0:
+				self.update_calendar()
+			elif self.i%200 == 0:
 				self.update_weather()
 
 if __name__ == '__main__':

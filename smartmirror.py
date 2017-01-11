@@ -35,7 +35,7 @@ class FullscreenWindow:
       
       # news
 		self.news = News(self.bottomFrame)
-		self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
+		#self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
       
       # calendar
 		self.calendar = Calendar(self.bottomFrame)
