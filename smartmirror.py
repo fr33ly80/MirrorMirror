@@ -58,6 +58,7 @@ class FullscreenWindow:
 		return "break"
   
 	def checkQueue(self):
+		'''
 		if not self.cmdQueue.empty():
 			cmd = self.cmdQueue.get()
 			if cmd == 'recognized':
@@ -84,7 +85,7 @@ class FullscreenWindow:
 					#self.tk.after(1500, self.sr_sprite.stop_flashing)
 					self.sr_sprite.set_color()
 			self.cmdQueue.task_done()
-			
+		'''
 		if not self.msgQueue.empty():
 			msg = self.msgQueue.get()
 			try:
@@ -108,9 +109,9 @@ class FullscreenWindow:
 		self.weather.get_weather()
 
 if __name__ == '__main__':
-	listener = mirror_earror(cmdQueue)
-	listener.daemon = True
-	listener.start()
+	#listener = mirror_earror(cmdQueue)
+	#listener.daemon = True
+	#listener.start()
 	controller = Controller(msgQueue)
 	controller.start()	
 	w = FullscreenWindow(cmdQueue, msgQueue)
