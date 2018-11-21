@@ -1,3 +1,7 @@
 requests
 feedparser
 Pillow
+httplib2
+google-api-python-client
+oauth2client
+newsapi-python

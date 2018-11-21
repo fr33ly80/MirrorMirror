@@ -14,7 +14,7 @@ import sys
 
 weather_api_token = ''
 with open('weather_key.txt', 'r') as f:
-    weather_api_token = f.readline()
+    weather_api_token = f.readline().rstrip()
 
 # maps weather underground icons to ids
 icon_lookup = {
@@ -39,8 +39,10 @@ class Weather(Frame):
 	def __init__(self, parent, *args, **kwargs):
 		Frame.__init__(self, parent, bg='black')
 		self.temperature = ''
-		self.units = 'celsius'
-		self.tunits = 'temp_c'
+		#self.units = 'celsius'
+		#self.tunits = 'temp_c'
+		self.units = 'fahrenheit'
+		self.tunits = 'temp_f'
 		self.location = ''
 		self.currently = ''
 		self.icon = ''
@@ -85,21 +87,21 @@ class Weather(Frame):
 	def get_weather(self):
 		try:
 			# get location
-			location_req_url = "http://freegeoip.net/json/%s" % self.get_ip()
+			location_req_url = "http://api.ipstack.com/%s?access_key=49d9fb6df1b7828b928a3a1c40d48b9f" % self.get_ip()
 			r = requests.get(location_req_url)
 			location_obj = json.loads(r.text)
 
 			location2 = "%s, %s" % (location_obj['city'], location_obj['region_code'])
-
+			
 			# get weather
 			weather_req_url = "http://api.wunderground.com/api/%s/conditions/q/%s/%s.json" % (weather_api_token, location_obj['region_code'], location_obj['city'])
 			r = requests.get(weather_req_url)
 			weather_obj = json.loads(r.text)
-
+			
 			forecast_req_url = "http://api.wunderground.com/api/%s/forecast/q/%s/%s.json" % (weather_api_token, location_obj['region_code'], location_obj['city'])
 			r = requests.get(forecast_req_url)
 			forecast_obj = json.loads(r.text)
-			
+
 			high = forecast_obj['forecast']['simpleforecast']['forecastday'][0]['high']
 			low = forecast_obj['forecast']['simpleforecast']['forecastday'][0]['low']
 			temps = {'low': low, 'high': high}

@@ -3,7 +3,7 @@ from smclock import *
 from smweather import *
 from smnews import *
 from smcalendar import *
-from MirrorListener import *
+#from MirrorListener import *
 from MirrorController import *
 
 import queue
@@ -35,15 +35,15 @@ class FullscreenWindow:
       
       # news
 		self.news = News(self.bottomFrame)
-		#self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
+		self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
       
       # calendar
-		self.calendar = Calendar(self.bottomFrame)
-		self.calendar.pack(side = RIGHT, anchor=S, padx=100, pady=60)
+		#self.calendar = Calendar(self.bottomFrame)
+		#self.calendar.pack(side = RIGHT, anchor=S, padx=100, pady=60)
 		
 		# SR Sprite
-		self.sr_sprite = mirrorSprite(self.topFrame)
-		self.sr_sprite.pack(side=TOP, anchor=N)
+		#self.sr_sprite = mirrorSprite(self.topFrame)
+		#self.sr_sprite.pack(side=TOP, anchor=N)
 		
 		self.checkQueue()		
 		

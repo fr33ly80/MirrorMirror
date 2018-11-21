@@ -1,4 +1,9 @@
+__pycache__/
+*.py[cod]
+
 /quickstart.py
 /client_secret.json
 /weather_key.txt
 /wit_key.txt
+/news_key.txt
+
